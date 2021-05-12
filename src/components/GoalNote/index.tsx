@@ -17,7 +17,6 @@ const GoalNote: FC<IGoalNote> = (props: IGoalNote) => {
   const { name, endDate, startValue, endValue, currentValue, startDate } = props;
 
   const getPercentage = () => {
-    console.log({ startValue, endValue });
     return ((startValue - currentValue) / (startValue - endValue)) * 100;
   };
 
@@ -26,12 +25,21 @@ const GoalNote: FC<IGoalNote> = (props: IGoalNote) => {
 
   return (
     <div style={{ paddingTop: 5 }}>
-      <Box width="50%" mr={1}>
-        {isInLastQuarterOfTime && '❗'} <b>{name}</b>
+      <Box display="flex" alignItems="center">
+        <Box minWidth={35} mr={1}>
+          🏁
+        </Box>
+        <Box width="50%" mr={1}>
+          {isInLastQuarterOfTime && '❗'} <b>{name}</b>
+        </Box>
+        <Box minWidth={35} mr={1}>
+          ⛳
+        </Box>
       </Box>
+
       <Box display="flex" alignItems="center">
         <Box minWidth={35} padding="2px">
-          {currentValue}
+          {startValue}
         </Box>
 
         <Box width="50%" mr={1}>

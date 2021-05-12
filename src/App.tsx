@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import DateHeader from './components/DateHeader';
 import GoalNote from './components/GoalNote';
@@ -6,8 +6,34 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { fetchApi } from './helpers/fetch';
+
+interface IGoal {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  startValue: number;
+  endValue: number;
+  currentValue: number;
+  category: string;
+}
+
+interface IApiResponse<T> {
+  data: T;
+  error: Error;
+}
 
 function App() {
+  const [data, setData] = useState<IGoal[]>([]);
+
+  useEffect(() => {
+    console.log('running effect');
+    fetchApi<IApiResponse<IGoal[]>>('http://localhost:8000/goals')
+      .then((result) => setData(result.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  console.log(data);
   return (
     <div className="App">
       <DateHeader />
@@ -15,30 +41,16 @@ function App() {
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
           <Typography>💪 Fitness</Typography>
         </AccordionSummary>
-        <GoalNote
-          name={'Weight Loss - KG'}
-          currentValue={87.4}
-          startDate={new Date('2021-02-22')}
-          endDate={new Date('2021-11-05')}
-          endValue={86}
-          startValue={92}
-        />
-        <GoalNote
-          name={'Arm size - cm'}
-          startDate={new Date('2021-02-02')}
-          endDate={new Date('2021-06-01')}
-          currentValue={39.5}
-          endValue={42}
-          startValue={37}
-        />
-        <GoalNote
-          name={'Pushup PR - pushups'}
-          startDate={new Date('2021-02-02')}
-          endDate={new Date('2021-05-12')}
-          currentValue={20}
-          endValue={60}
-          startValue={10}
-        />
+        {data.map((goal) => (
+          <GoalNote
+            name={goal.name}
+            currentValue={goal.currentValue}
+            startDate={new Date(goal.startDate)}
+            endDate={new Date(goal.endDate)}
+            endValue={goal.endValue}
+            startValue={goal.startValue}
+          />
+        ))}
       </Accordion>
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
